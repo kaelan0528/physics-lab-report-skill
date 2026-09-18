@@ -1,0 +1,418 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generic physics laboratory frozen data",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "experiment",
+    "sources",
+    "raw_measurements",
+    "instrument_parameters",
+    "corrections",
+    "uncertainty_parameters",
+    "derived_values",
+    "notes",
+    "verification"
+  ],
+  "properties": {
+    "experiment": {
+      "type": "object",
+      "required": [
+        "title",
+        "version"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "supersedes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "change_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "role",
+          "locator"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "manual",
+              "raw_record",
+              "previous_template",
+              "target_word",
+              "instrument_document",
+              "user_confirmation"
+            ]
+          },
+          "locator": {
+            "type": "string",
+            "description": "Relative source identifier plus page/table locator; never a local absolute path."
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "raw_measurements": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "$ref": "#/$defs/quantity"
+        }
+      }
+    },
+    "instrument_parameters": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/quantity"
+      }
+    },
+    "corrections": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "reading",
+          "meaning",
+          "application",
+          "affected_quantities"
+        ],
+        "properties": {
+          "reading": {
+            "$ref": "#/$defs/quantity"
+          },
+          "meaning": {
+            "enum": [
+              "zero_reading",
+              "systematic_correction"
+            ]
+          },
+          "application": {
+            "type": "string",
+            "description": "Signed correction relation justified by source."
+          },
+          "affected_quantities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "uncertainty_parameter_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "uncertainty_parameters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "category",
+          "parameter",
+          "meaning",
+          "distribution",
+          "distribution_source_refs"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "A",
+              "B",
+              "correction_uncertainty"
+            ]
+          },
+          "parameter": {
+            "$ref": "#/$defs/quantity"
+          },
+          "meaning": {
+            "enum": [
+              "error_limit",
+              "resolution",
+              "calibration_standard_uncertainty",
+              "repeatability_input",
+              "other"
+            ]
+          },
+          "distribution": {
+            "enum": [
+              "uniform",
+              "normal",
+              "triangular",
+              "other",
+              "unspecified"
+            ]
+          },
+          "distribution_source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "coverage_factor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "correlation_notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "derived_values": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "recorded",
+          "origin",
+          "relation",
+          "rounding"
+        ],
+        "properties": {
+          "recorded": {
+            "$ref": "#/$defs/quantity"
+          },
+          "origin": {
+            "const": "recorded_on_site"
+          },
+          "relation": {
+            "type": "string"
+          },
+          "rounding": {
+            "type": "string"
+          },
+          "consistency_check": {
+            "enum": [
+              "pass",
+              "fail",
+              "pending"
+            ]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "state",
+        "unresolved_fields",
+        "checks",
+        "confirmed_input_ids"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "draft",
+            "frozen"
+          ]
+        },
+        "unresolved_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "method",
+              "status",
+              "evidence"
+            ],
+            "properties": {
+              "method": {
+                "enum": [
+                  "visual",
+                  "table_relation",
+                  "inverse_formula",
+                  "unit",
+                  "order_of_magnitude",
+                  "human_confirmation"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "pending",
+                  "not_applicable"
+                ]
+              },
+              "evidence": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "confirmed_input_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "frozen_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit",
+        "source_refs",
+        "status",
+        "confirmation"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$",
+          "description": "Exact decimal string preserving recorded precision; null if unresolved."
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Use 1 for dimensionless."
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "ambiguous",
+            "verified",
+            "user_confirmed"
+          ]
+        },
+        "confirmation": {
+          "type": "object",
+          "required": [
+            "visual_check",
+            "human_confirmed",
+            "evidence"
+          ],
+          "properties": {
+            "visual_check": {
+              "enum": [
+                "pass",
+                "pending",
+                "not_applicable"
+              ]
+            },
+            "human_confirmed": {
+              "type": "boolean"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "confirmed_at": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "state": {
+                "const": "frozen"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "unresolved_fields": {
+                "maxItems": 0
+              },
+              "frozen_at": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "frozen_at"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "description": "Schema validates structure, not truth. Before freezing, resolve every input status, source reference, ambiguity, unit and verification check. Never compute from a draft. Derived values here are field-recorded only; later calculations belong in a separate version-linked output."
+}

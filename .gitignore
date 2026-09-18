@@ -1,0 +1,29 @@
+# Private inputs and generated outputs
+*.docx
+*.doc
+*.pdf
+*.zip
+*.tmp
+~$*
+*_before_*.docx
+data_freeze.json
+data_freeze*.json
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.xlsx
+*.csv
+private/
+inputs/
+outputs/
+.env
+.env.*
+# Local caches
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+# Keep public schema
+!templates/data-freeze-schema.json
